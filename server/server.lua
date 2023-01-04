@@ -43,3 +43,19 @@ AddEventHandler('chHyperSound:stop', function(soundId, targetId)
 
     TriggerClientEvent('__chHyperSound:stop', targetId, soundId)
 end)
+
+AddEventHandler('chHyperSound:increaseVolume', function(soundId, targetId)
+    if not targetId then
+        targetId = -1
+    end
+
+    TriggerClientEvent('__chHyperSound:increaseVolume', targetId, soundId)
+end)
+
+AddEventHandler('chHyperSound:decreaseVolume', function(soundId, targetId)
+    if not targetId then
+        targetId = -1
+    end
+
+    TriggerClientEvent('__chHyperSound:decreaseVolume', targetId, soundId)
+end)

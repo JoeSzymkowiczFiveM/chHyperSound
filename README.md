@@ -41,6 +41,10 @@ Config.PredefinedLocations = {
         [2] = vector3(682.65, 567.69, 146.0),
         [3] = vector3(695.35, 563.12, 141.0),
     },
+    ['purge'] = {
+        [1] = vector3(191.20587158203128, -840.6333618164062, 29.94925498962402),
+    },
+    
 }
 ```
 
@@ -95,6 +99,28 @@ TriggerEvent('chHyperSound:stop', soundId, targetId)
 | `soundId` | `string` | The Sound ID to stop playing.
 | `targetId` | `nil\|number` | Pass a player ID to stop the sound on a single player, or pass `nil` or `-1` to stop the sound on all players.
 
+### chHyperSound:decreaseVolume
+
+```lua
+TriggerEvent('chHyperSound:decreaseVolume', soundId, targetId)
+```
+
+| Parameter | Type | Description |
+| - | - | - |
+| `soundId` | `string` | The Sound ID to decrease audio volume on.
+| `targetId` | `nil\|number` | Pass a player ID to stop the sound on a single player, or pass `nil` or `-1` to stop the sound on all players.
+
+### chHyperSound:increaseVolume
+
+```lua
+TriggerEvent('chHyperSound:increaseVolume', soundId, targetId)
+```
+
+| Parameter | Type | Description |
+| - | - | - |
+| `soundId` | `string` | The Sound ID to increase audio volume on.
+| `targetId` | `nil\|number` | Pass a player ID to stop the sound on a single player, or pass `nil` or `-1` to stop the sound on all players.
+
 ## Examples
 
 ### Play `example.ogg` from a coordinate.
@@ -113,6 +139,18 @@ TriggerEvent('chHyperSound:playOnEntity', 123, -1, 'example', false, 30.0)
 
 ```lua
 TriggerEvent('chHyperSound:stop', 123)
+```
+
+### Decrease the volume of Sound ID 123.
+
+```lua
+TriggerEvent('chHyperSound:decreaseVolume', 123)
+```
+
+### Increase the volume of Sound ID 123.
+
+```lua
+TriggerEvent('chHyperSound:increaseVolume', 123)
 ```
 
 ## License

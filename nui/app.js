@@ -43,7 +43,7 @@ function updateVolume(soundId) {
 
     _.forEach(activeSounds[soundId].coordinates, (coordinate, key) => {
         if (coordinate === 'self') {
-            activeSounds[soundId].howlerSound.volume((sfxVolume * 0.1 * 0.15), activeSounds[soundId].howlerIds[key]);
+            activeSounds[soundId].howlerSound.volume((sfxVolume * 0.1 * 0.15) * activeSounds[soundId].volume, activeSounds[soundId].howlerIds[key]);
         } else {
             let distance = Math.hypot((playerCoordinates.x - coordinate.x), (playerCoordinates.y - coordinate.y), (playerCoordinates.z - coordinate.z));
             let volume   = ((sfxVolume * 0.1) - (distance * volumeMultiplier));
@@ -53,7 +53,7 @@ function updateVolume(soundId) {
             }
     
             if (activeSounds[soundId].howlerIds[key]) {
-                activeSounds[soundId].howlerSound.volume(volume, activeSounds[soundId].howlerIds[key]);
+                activeSounds[soundId].howlerSound.volume(volume * activeSounds[soundId].volume, activeSounds[soundId].howlerIds[key]);
             }
         }
     });
@@ -71,7 +71,7 @@ function addSound(eventData) {
         howlerIds[key] = howlerSound.play();
 
         if (coordinate === 'self') {
-            howlerSound.volume((sfxVolume * 0.1 * 0.15), howlerIds[key]);
+            howlerSound.volume((sfxVolume * 0.1 * 0.15)*1, howlerIds[key]);
         } else {
             howlerSound.pannerAttr({
                 panningModel: 'HRTF',
@@ -88,7 +88,7 @@ function addSound(eventData) {
         howlerIds: howlerIds,
         coordinates: eventData.coordinates,
         maxDistance: eventData.maxDistance,
-        volume: eventData.volume,
+        volume: 1,
         isLooped: eventData.isLooped,
     }
 
@@ -133,6 +133,22 @@ function soundFinished(soundId) {
     }).then(() => {});
 }
 
+function increaseVolume(soundId) {
+    if (typeof activeSounds[soundId] === 'undefined') {
+        return;
+    }
+
+    activeSounds[soundId].volume = activeSounds[soundId].volume + .2
+}
+
+function decreaseVolume(soundId) {
+    if (typeof activeSounds[soundId] === 'undefined') {
+        return;
+    }
+    
+    activeSounds[soundId].volume = activeSounds[soundId].volume - .2
+}
+
 //
 // Events
 //
@@ -160,6 +176,18 @@ window.addEventListener('message', (event) => {
 
     if (eventData.type === 'stop') {
         stopSound(eventData.soundId);
+
+        return;
+    }
+
+    if (eventData.type === 'increaseVolume') {
+        increaseVolume(eventData.soundId);
+
+        return;
+    }
+
+    if (eventData.type === 'decreaseVolume') {
+        decreaseVolume(eventData.soundId);
 
         return;
     }

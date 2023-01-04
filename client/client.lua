@@ -1,13 +1,63 @@
 local activeSounds = {}
 
 --
+-- Functions
+--
+
+local function getCameraDirection()
+    local cameraRotation = GetGameplayCamRot(0)
+
+    local radiansZ = (cameraRotation.z * 0.0174532924)
+    local radiansX = (cameraRotation.x * 0.0174532924)
+    local xCos     = math.abs(math.cos(radiansX))
+
+    return {
+        x = (-math.sin(radiansZ) * xCos),
+        y = (math.cos(radiansZ) * xCos),
+        z = math.sin(radiansX),
+    }
+end
+
+local function convertLocation(locations)
+    local retVal = {}
+
+    for _, location in pairs(locations) do
+        if type(location) == 'string' and location == 'self' then
+            table.insert(retVal, 'self')
+        end
+
+        if type(location) == 'vector3' then
+            table.insert(retVal, {
+                x = location.x,
+                y = location.y,
+                z = location.z,
+            })
+        end
+
+        ::continue::
+    end
+
+    return retVal
+end
+
+local function IsSoundIdPlaying(soundId)
+    local response = false
+    if activeSounds[soundId] ~= nil then
+        response = true
+    end
+    return response
+end
+
+exports("IsSoundIdPlaying", IsSoundIdPlaying)
+
+--
 -- Threads
 --
 
-Citizen.CreateThread(function()
+CreateThread(function()
     while true do
-        Citizen.Wait(10)
- 
+        Wait(100)
+
         if next(activeSounds) then
             local playerCoordinates = GetEntityCoords(PlayerPedId())
             local cameraDirection   = getCameraDirection()
@@ -41,51 +91,13 @@ Citizen.CreateThread(function()
                     end
                 end
             end
+        else
+            Wait(1000)
         end
     end
 end)
 
---
--- Functions
---
-
-function getCameraDirection()
-    local cameraRotation = GetGameplayCamRot(0)
-
-    local radiansZ = (cameraRotation.z * 0.0174532924)
-    local radiansX = (cameraRotation.x * 0.0174532924)
-    local xCos     = math.abs(math.cos(radiansX))
-
-    return {
-        x = (-math.sin(radiansZ) * xCos),
-        y = (math.cos(radiansZ) * xCos),
-        z = math.sin(radiansX),
-    }
-end
-
-function convertLocation(locations)
-    local retVal = {}
-
-    for _, location in pairs(locations) do
-        if type(location) == 'string' and location == 'self' then
-            table.insert(retVal, 'self')
-        end
-
-        if type(location) == 'vector3' then
-            table.insert(retVal, {
-                x = location.x,
-                y = location.y,
-                z = location.z,
-            })
-        end
-
-        ::continue::
-    end
-
-    return retVal
-end
-
-function generateUuid()
+local function generateUuid()
 	local template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
 
     return string.gsub(template, '[xy]', function (c)
@@ -180,6 +192,20 @@ end)
 RegisterNetEvent('__chHyperSound:stop', function(soundId)
     SendNUIMessage({
         type    = 'stop',
+        soundId = soundId,
+    })
+end)
+
+RegisterNetEvent('__chHyperSound:increaseVolume', function(soundId)
+    SendNUIMessage({
+        type    = 'increaseVolume',
+        soundId = soundId,
+    })
+end)
+
+RegisterNetEvent('__chHyperSound:decreaseVolume', function(soundId)
+    SendNUIMessage({
+        type    = 'decreaseVolume',
         soundId = soundId,
     })
 end)
