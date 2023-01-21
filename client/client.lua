@@ -217,3 +217,10 @@ RegisterNetEvent('__chHyperSound:filterSound', function(soundId, filterName)
         filterName = filterName,
     })
 end)
+
+RegisterNetEvent('__chHyperSound:removeFilter', function(soundId)
+    SendNUIMessage({
+        type    = 'removeFilter',
+        soundId = soundId,
+    })
+end)
