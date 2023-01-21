@@ -59,3 +59,19 @@ AddEventHandler('chHyperSound:decreaseVolume', function(soundId, targetId)
 
     TriggerClientEvent('__chHyperSound:decreaseVolume', targetId, soundId)
 end)
+
+AddEventHandler('chHyperSound:filterSound', function(soundId, filterName, targetId)
+    if not targetId then
+        targetId = -1
+    end
+
+    TriggerClientEvent('__chHyperSound:filterSound', targetId, soundId, filterName)
+end)
+
+AddEventHandler('chHyperSound:removeFilter', function(soundId, targetId)
+    if not targetId then
+        targetId = -1
+    end
+
+    TriggerClientEvent('__chHyperSound:filterSound', targetId, soundId, 'normal')
+end)

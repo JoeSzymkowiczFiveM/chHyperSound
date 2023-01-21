@@ -70,6 +70,12 @@ function addSound(eventData) {
     _.forEach(eventData.coordinates, (coordinate, key) => {
         howlerIds[key] = howlerSound.play();
 
+        howlerSound.addFilter({
+            filterType: 'notch',
+            frequency: 500,
+            Q: 1.0
+        });
+
         if (coordinate === 'self') {
             howlerSound.volume((sfxVolume * 0.1 * 0.15)*1, howlerIds[key]);
         } else {
@@ -149,6 +155,54 @@ function decreaseVolume(soundId) {
     activeSounds[soundId].volume = activeSounds[soundId].volume - .2
 }
 
+function stopSound(soundId) {
+    if (typeof activeSounds[soundId] === 'undefined') {
+        return;
+    }
+
+    activeSounds[soundId].howlerSound.unload();
+
+    soundFinished(soundId);
+}
+
+const filters = [
+    {
+        name: 'muffled',
+        filterType: 'lowpass',
+        frequency: 300,
+        Q: 3.0,
+    },
+    {
+        name: 'normal',
+        filterType: 'notch',
+        frequency: 500,
+        Q: 1.0,
+    }
+];
+
+function filterSound(soundId, filterName) {
+    if (typeof activeSounds[soundId] === 'undefined') {
+        return;
+    }
+
+    var result = filters.find(filter => {
+        return filter.name === filterName
+    });
+
+    activeSounds[soundId].howlerSound.addFilter({
+        filterType: result.filterType,
+        frequency: result.frequency,
+        Q: result.Q
+    });
+}
+
+function removeFilter(soundId) {
+    if (typeof activeSounds[soundId] === 'undefined') {
+        return;
+    }
+}
+
+
 //
 // Events
 //
@@ -188,6 +242,18 @@ window.addEventListener('message', (event) => {
 
     if (eventData.type === 'decreaseVolume') {
         decreaseVolume(eventData.soundId);
+
+        return;
+    }
+
+    if (eventData.type === 'filterSound') {
+        filterSound(eventData.soundId, eventData.filterName);
+
+        return;
+    }
+
+    if (eventData.type === 'removeFilter') {
+        removeFilter(eventData.soundId);
 
         return;
     }

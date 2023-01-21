@@ -209,3 +209,11 @@ RegisterNetEvent('__chHyperSound:decreaseVolume', function(soundId)
         soundId = soundId,
     })
 end)
+
+RegisterNetEvent('__chHyperSound:filterSound', function(soundId, filterName)
+    SendNUIMessage({
+        type    = 'filterSound',
+        soundId = soundId,
+        filterName = filterName,
+    })
+end)
